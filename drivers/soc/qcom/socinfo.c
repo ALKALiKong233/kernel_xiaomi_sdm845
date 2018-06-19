@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2009-2019, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2009-2018, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -66,8 +67,13 @@ enum {
 	HW_PLATFORM_RCM	= 21,
 	HW_PLATFORM_STP = 23,
 	HW_PLATFORM_SBC = 24,
-	HW_PLATFORM_ADP = 25,
 	HW_PLATFORM_HDK = 31,
+	HW_PLATFORM_D5X = 40,
+	HW_PLATFORM_E1N = 50,
+	HW_PLATFORM_E10 = 60,
+	HW_PLATFORM_E1S = 70,
+	HW_PLATFORM_E8  = 80,
+	HW_PLATFORM_E5  = 90,
 	HW_PLATFORM_INVALID
 };
 
@@ -88,8 +94,13 @@ const char *hw_platform[] = {
 	[HW_PLATFORM_DTV] = "DTV",
 	[HW_PLATFORM_STP] = "STP",
 	[HW_PLATFORM_SBC] = "SBC",
-	[HW_PLATFORM_ADP] = "ADP",
 	[HW_PLATFORM_HDK] = "HDK",
+	[HW_PLATFORM_D5X] = "POLARIS",
+	[HW_PLATFORM_E1N] = "DIPPER",
+	[HW_PLATFORM_E10] = "BERYLLIUM",
+	[HW_PLATFORM_E1S] = "EQUULEUS",
+	[HW_PLATFORM_E8] = "URSA",
+	[HW_PLATFORM_E5] = "PERSEUS",
 };
 
 enum {
@@ -573,7 +584,6 @@ static struct msm_soc_info cpu_of_id[] = {
 	/* sdxpoorwills ID */
 	[334] = {SDX_CPU_SDXPOORWILLS, "SDXPOORWILLS"},
 	[335] = {SDX_CPU_SDXPOORWILLS, "SDXPOORWILLS"},
-	[408] = {SDX_CPU_SDXPOORWILLS, "SDXPOORWILLS"},
 
 	/* 9650 IDs */
 	[279] = {MSM_CPU_9650, "MDM9650"},
@@ -605,8 +615,8 @@ static struct msm_soc_info cpu_of_id[] = {
 	/* SDM710 ID */
 	[360] = {MSM_CPU_SDM710, "SDM710"},
 
-	/* SDM712 ID */
-	[393] = {MSM_CPU_SDM712, "SDM712"},
+	/* SDMNOBELIUM ID */
+	[393] = {MSM_CPU_SDMNOBELIUM, "SDMNOBELIUM"},
 
 	/* SXR1120 ID */
 	[370] = {MSM_CPU_SXR1120, "SXR1120"},
@@ -633,9 +643,6 @@ static struct msm_soc_info cpu_of_id[] = {
 	[308] = {MSM_CPU_8917, "MSM8217"},
 	[309] = {MSM_CPU_8917, "MSM8617"},
 
-	/* MSM8940 IDs */
-	[313] = {MSM_CPU_8940, "MSM8940"},
-
 	/* SDM429 and SDM439 ID*/
 	[353] = {MSM_CPU_SDM439, "SDM439"},
 	[354] = {MSM_CPU_SDM429, "SDM429"},
@@ -644,13 +651,6 @@ static struct msm_soc_info cpu_of_id[] = {
 
 	/* QM215 ID */
 	[386] = {MSM_CPU_QM215, "QM215"},
-
-	/* QCM2150 ID */
-	[436] = {MSM_CPU_QCM2150, "QCM2150"},
-
-	/* SDM429W IDs*/
-	[416] = {MSM_CPU_SDM429W, "SDM429W"},
-	[437] = {MSM_CPU_SDA429W, "SDA429W"},
 	/* Uninitialized IDs are not known to run Linux.
 	 * MSM_CPU_UNKNOWN is set to 0 to ensure these IDs are
 	 * considered as unknown CPU.
@@ -1570,9 +1570,9 @@ static void * __init setup_dummy_socinfo(void)
 		dummy_socinfo.id = 360;
 		strlcpy(dummy_socinfo.build_id, "sdm710 - ",
 			sizeof(dummy_socinfo.build_id));
-	} else if (early_machine_is_sdm712()) {
+	} else if (early_machine_is_sdmnobelium()) {
 		dummy_socinfo.id = 393;
-		strlcpy(dummy_socinfo.build_id, "sdm712 - ",
+		strlcpy(dummy_socinfo.build_id, "sdmnobelium - ",
 			sizeof(dummy_socinfo.build_id));
 	} else if (early_machine_is_sda670()) {
 		dummy_socinfo.id = 337;
@@ -1606,10 +1606,6 @@ static void * __init setup_dummy_socinfo(void)
 		dummy_socinfo.id = 303;
 		strlcpy(dummy_socinfo.build_id, "msm8917 - ",
 			sizeof(dummy_socinfo.build_id));
-	} else if (early_machine_is_msm8940()) {
-		dummy_socinfo.id = 313;
-		strlcpy(dummy_socinfo.build_id, "msm8940 - ",
-			sizeof(dummy_socinfo.build_id));
 	} else if (early_machine_is_sdm450()) {
 		dummy_socinfo.id = 338;
 		strlcpy(dummy_socinfo.build_id, "sdm450 - ",
@@ -1638,14 +1634,6 @@ static void * __init setup_dummy_socinfo(void)
 		dummy_socinfo.id = 364;
 		strlcpy(dummy_socinfo.build_id, "sda429 - ",
 				sizeof(dummy_socinfo.build_id));
-	} else if (early_machine_is_sdm429w()) {
-		dummy_socinfo.id = 416;
-		strlcpy(dummy_socinfo.build_id, "sdm429w - ",
-				sizeof(dummy_socinfo.build_id));
-	} else if (early_machine_is_sda429w()) {
-		dummy_socinfo.id = 437;
-		strlcpy(dummy_socinfo.build_id, "sda429w - ",
-				sizeof(dummy_socinfo.build_id));
 	} else if (early_machine_is_mdm9607()) {
 		dummy_socinfo.id = 290;
 		strlcpy(dummy_socinfo.build_id, "mdm9607 - ",
@@ -1653,10 +1641,6 @@ static void * __init setup_dummy_socinfo(void)
 	} else if (early_machine_is_qm215()) {
 		dummy_socinfo.id = 386;
 		strlcpy(dummy_socinfo.build_id, "qm215 - ",
-				sizeof(dummy_socinfo.build_id));
-	} else if (early_machine_is_qcm2150()) {
-		dummy_socinfo.id = 436;
-		strlcpy(dummy_socinfo.build_id, "qcm2150 - ",
 				sizeof(dummy_socinfo.build_id));
 	}
 
@@ -2004,6 +1988,40 @@ static void socinfo_select_format(void)
 		socinfo_format = socinfo->v0_1.format;
 	}
 }
+
+uint32_t get_hw_version_platform(void)
+{
+	uint32_t hw_type = socinfo_get_platform_type();
+	if (hw_type == HW_PLATFORM_E1N)
+		return HARDWARE_PLATFORM_DIPPERN;
+	else if (hw_type == HW_PLATFORM_D5X)
+		return HARDWARE_PLATFORM_POLARIS;
+	else if (hw_type == HW_PLATFORM_E10)
+		return HARDWARE_PLATFORM_BERYLLIUM;
+	else if (hw_type == HW_PLATFORM_E1S)
+		return HARDWARE_PLATFORM_EQUULEUS;
+	else if (hw_type == HW_PLATFORM_E8)
+		return HARDWARE_PLATFORM_URSA;
+	else if (hw_type == HW_PLATFORM_E5)
+		return HARDWARE_PLATFORM_PERSEUS;
+	else
+		return HARDWARE_PLATFORM_UNKNOWN;
+}
+EXPORT_SYMBOL(get_hw_version_platform);
+
+uint32_t get_hw_version_major(void)
+{
+	uint32_t version = socinfo_get_platform_version();
+	return (version & HW_MAJOR_VERSION_MASK) >> HW_MAJOR_VERSION_SHIFT;
+}
+EXPORT_SYMBOL(get_hw_version_major);
+
+uint32_t get_hw_version_minor(void)
+{
+	uint32_t version = socinfo_get_platform_version();
+	return (version & HW_MINOR_VERSION_MASK) >> HW_MINOR_VERSION_SHIFT;
+}
+EXPORT_SYMBOL(get_hw_version_minor);
 
 int __init socinfo_init(void)
 {
