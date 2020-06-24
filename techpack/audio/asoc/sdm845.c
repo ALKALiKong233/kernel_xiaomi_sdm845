@@ -30,7 +30,7 @@
 #include <sound/jack.h>
 #include <sound/pcm_params.h>
 #include <sound/info.h>
-#include "device_event.h"
+#include <device_event.h>
 #include <dsp/audio_notifier.h>
 #include <dsp/q6afe-v2.h>
 #include <dsp/q6core.h>
@@ -3271,13 +3271,12 @@ static const struct snd_kcontrol_new msm_snd_controls[] = {
 			msm_hifi_put),
 	SOC_ENUM_EXT("MultiMedia5_RX QOS Vote", qos_vote, msm_qos_ctl_get,
 			msm_qos_ctl_put),
-	SOC_SINGLE_MULTI_EXT("TDM Slot Map", SND_SOC_NOPM, 0, 255, 0, 4,
-	NULL, tdm_slot_map_put),
 	SOC_ENUM_EXT("Ultrasound Power", ultrasound_power,
 			ultrasound_power_get, ultrasound_power_put),
-
 	SOC_SINGLE_EXT("USB Headset Direction", 0, 0, UINT_MAX, 0,
 			usbhs_direction_get, NULL),
+	SOC_SINGLE_MULTI_EXT("TDM Slot Map", SND_SOC_NOPM, 0, 255, 0, 4,
+	NULL, tdm_slot_map_put),
 };
 
 static int msm_snd_enable_codec_ext_clk(struct snd_soc_codec *codec,
@@ -4374,12 +4373,12 @@ static void *def_tavil_mbhc_cal(void)
 
 	btn_high[0] = 75;
 	btn_high[1] = 260;
-	btn_high[2] = 480;
-	btn_high[3] = 480;
-	btn_high[4] = 480;
-	btn_high[5] = 480;
-	btn_high[6] = 480;
-	btn_high[7] = 480;
+	btn_high[2] = 750;
+	btn_high[3] = 750;
+	btn_high[4] = 750;
+	btn_high[5] = 750;
+	btn_high[6] = 750;
+	btn_high[7] = 750;
 
 	return tavil_wcd_cal;
 }
@@ -7020,16 +7019,16 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev)
 			       sizeof(msm_mi2s_be_dai_links));
 			total_links += ARRAY_SIZE(msm_mi2s_be_dai_links);
 
-			if ((get_hw_version_platform() == HARDWARE_PLATFORM_DIPPERN) ||
-				(get_hw_version_platform() == HARDWARE_PLATFORM_URSA) ||
-				(get_hw_version_platform() == HARDWARE_PLATFORM_EQUULEUS) ||
-				(get_hw_version_platform() == HARDWARE_PLATFORM_PERSEUS)) {
+			if (get_hw_version_platform() == HARDWARE_PLATFORM_DIPPERN ||
+					get_hw_version_platform() == HARDWARE_PLATFORM_URSA ||
+					get_hw_version_platform() == HARDWARE_PLATFORM_EQUULEUS ||
+					get_hw_version_platform() == HARDWARE_PLATFORM_PERSEUS) {
 				memcpy(msm_tavil_snd_card_dai_links + total_links,
 						msm_quat_mi2s_tas2557_dai_links,
 						sizeof(msm_quat_mi2s_tas2557_dai_links));
 				total_links += ARRAY_SIZE(msm_quat_mi2s_tas2557_dai_links);
-			} else if ((get_hw_version_platform() == HARDWARE_PLATFORM_POLARIS) ||
-			(get_hw_version_platform() == HARDWARE_PLATFORM_BERYLLIUM)) {
+			} else if (get_hw_version_platform() == HARDWARE_PLATFORM_POLARIS ||
+					get_hw_version_platform() == HARDWARE_PLATFORM_BERYLLIUM) {
 				memcpy(msm_tavil_snd_card_dai_links + total_links,
 						msm_quat_mi2s_tas2559_dai_links,
 						sizeof(msm_quat_mi2s_tas2559_dai_links));

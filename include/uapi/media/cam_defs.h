@@ -484,4 +484,9 @@ struct cam_luma_data {
 	uint32_t        gain;
 };
 
+struct cam_luma_data {
+	uint32_t        expo;
+	uint32_t        gain;
+};
+
 #endif /* __UAPI_CAM_DEFS_H__ */

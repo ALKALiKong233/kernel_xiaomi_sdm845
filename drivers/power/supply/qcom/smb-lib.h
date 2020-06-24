@@ -82,6 +82,8 @@ enum print_reason {
 #define HVDCP2_ICL_VOTER		"HVDCP2_ICL_VOTER"
 #define OV_VOTER			"OV_VOTER"
 #define FG_ESR_VOTER			"FG_ESR_VOTER"
+#define FCC_STEPPER_VOTER		"FCC_STEPPER_VOTER"
+#define PD_NOT_SUPPORTED_VOTER		"PD_NOT_SUPPORTED_VOTER"
 #define DCIN_USER_VOTER			"DCIN_USER_VOTER"
 #define UNSTANDARD_QC2_VOTER		"UNSTANDARD_QC2_VOTER"
 
@@ -388,6 +390,7 @@ struct smb_charger {
 	bool			step_chg_enabled;
 	bool			sw_jeita_enabled;
 	bool			wireless_charging_flag;
+	bool			wireless_support;
 	bool			is_hdc;
 	bool			chg_done;
 	bool			connector_type;
@@ -419,6 +422,8 @@ struct smb_charger {
 	int			dc_input_current_now;
 	bool			disable_stat_sw_override;
 	bool			in_chg_lock;
+	bool			fcc_stepper_enable;
+	bool			ufp_only_mode;
 
 	/* workaround flag */
 	u32			wa_flags;
@@ -432,6 +437,7 @@ struct smb_charger {
 	int			qc2_max_pulses;
 	bool			non_compliant_chg_detected;
 	bool			fake_usb_insertion;
+	bool			reddragon_ipc_wa;
 	bool			ignore_recheck_flag;
 	bool			check_vbus_once;
 	bool			unstandard_hvdcp;
@@ -638,6 +644,7 @@ void smblib_usb_typec_change(struct smb_charger *chg);
 int smblib_set_prop_rerun_apsd(struct smb_charger *chg,
 				const union power_supply_propval *val);
 int smblib_toggle_stat(struct smb_charger *chg, int reset);
+int smblib_force_ufp(struct smb_charger *chg);
 int smblib_set_prop_wireless_wakelock(struct smb_charger *chg,
 				const union power_supply_propval *val);
 

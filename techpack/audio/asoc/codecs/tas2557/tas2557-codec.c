@@ -44,6 +44,7 @@
 #include <sound/soc.h>
 #include <sound/initval.h>
 #include <sound/tlv.h>
+#include <soc/qcom/socinfo.h>
 
 #include "tas2557-core.h"
 #include "tas2557-codec.h"
