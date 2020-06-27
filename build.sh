@@ -63,9 +63,10 @@ build_dipper(){
 	print "Building Kernel for dipper..." blue
 	make $args dipper_defconfig&&make $args
 	if [ $? -ne 0 ]; then
-    terminate "Error while building for dipper!"
-    fi
+    echo "Error while building for dipper!"
+	else
 	mkzip "dipper-${1}"
+    fi
 }
 
 mkzip (){
@@ -82,4 +83,3 @@ mkzip (){
 ./prepare.sh
 clean
 build_dipper
-mkzip
