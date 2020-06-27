@@ -58,7 +58,7 @@
 #define ICP_DEV_TYPE_TO_CLK_TYPE(dev_type) \
 	((dev_type == CAM_ICP_RES_TYPE_BPS) ? ICP_CLK_HW_BPS : ICP_CLK_HW_IPE)
 
-#define ICP_DEVICE_IDLE_TIMEOUT 400
+#define ICP_DEVICE_IDLE_TIMEOUT 3000
 
 static struct cam_icp_hw_mgr icp_hw_mgr;
 
@@ -476,13 +476,13 @@ static void cam_icp_ctx_timer_cb(unsigned long data)
 		return;
 	}
 
+	spin_unlock_irqrestore(&icp_hw_mgr.hw_mgr_lock, flags);
 	task_data = (struct clk_work_data *)task->payload;
 	task_data->data = timer->parent;
 	task_data->type = ICP_WORKQ_TASK_MSG_TYPE;
 	task->process_cb = cam_icp_ctx_timer;
 	cam_req_mgr_workq_enqueue_task(task, &icp_hw_mgr,
 		CRM_TASK_PRIORITY_0);
-	spin_unlock_irqrestore(&icp_hw_mgr.hw_mgr_lock, flags);
 }
 
 static void cam_icp_device_timer_cb(unsigned long data)
@@ -500,13 +500,13 @@ static void cam_icp_device_timer_cb(unsigned long data)
 		return;
 	}
 
+	spin_unlock_irqrestore(&icp_hw_mgr.hw_mgr_lock, flags);
 	task_data = (struct clk_work_data *)task->payload;
 	task_data->data = timer->parent;
 	task_data->type = ICP_WORKQ_TASK_MSG_TYPE;
 	task->process_cb = cam_icp_deinit_idle_clk;
 	cam_req_mgr_workq_enqueue_task(task, &icp_hw_mgr,
 		CRM_TASK_PRIORITY_0);
-	spin_unlock_irqrestore(&icp_hw_mgr.hw_mgr_lock, flags);
 }
 
 static int cam_icp_clk_info_init(struct cam_icp_hw_mgr *hw_mgr,
@@ -534,7 +534,7 @@ static int cam_icp_ctx_timer_start(struct cam_icp_hw_ctx_data *ctx_data)
 	int rc = 0;
 
 	rc = crm_timer_init(&ctx_data->watch_dog,
-		200, ctx_data, &cam_icp_ctx_timer_cb);
+		ICP_DEVICE_IDLE_TIMEOUT, ctx_data, &cam_icp_ctx_timer_cb);
 	if (rc)
 		CAM_ERR(CAM_ICP, "Failed to start timer");
 
@@ -2019,6 +2019,7 @@ int32_t cam_icp_hw_mgr_cb(uint32_t irq_status, void *data)
 		return -ENOMEM;
 	}
 
+	spin_unlock_irqrestore(&hw_mgr->hw_mgr_lock, flags);
 	task_data = (struct hfi_msg_work_data *)task->payload;
 	task_data->data = hw_mgr;
 	task_data->irq_status = irq_status;
@@ -2026,7 +2027,6 @@ int32_t cam_icp_hw_mgr_cb(uint32_t irq_status, void *data)
 	task->process_cb = cam_icp_mgr_process_msg;
 	rc = cam_req_mgr_workq_enqueue_task(task, &icp_hw_mgr,
 		CRM_TASK_PRIORITY_0);
-	spin_unlock_irqrestore(&hw_mgr->hw_mgr_lock, flags);
 
 	return rc;
 }
