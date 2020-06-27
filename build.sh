@@ -71,7 +71,7 @@ build_dipper(){
 mkzip (){
 	zipname="(${1})Li-Kernel-$date.zip"
 	cp -f out/arch/arm64/boot/Image.gz-dtb ~/AnyKernel2
-	cd ~/AnyKernel2
+	cd ~/AnyKernel3
 	zip -r "$zipname" *
 	mv -f "$zipname" ${HOME}
 	cd ${HOME}
